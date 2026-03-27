@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Game - Poker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+
+  <div class="game-container">
+
+    <!-- Header -->
+    <div class="game-header">
+      <button id="leave-btn">← Leave</button>
+      <h2 id="room-name">Room</h2>
+    </div>
+
+    <!-- Table -->
+    <div class="table">
+
+      <!-- Community Cards -->
+      <div id="community-cards" class="cards"></div>
+
+      <!-- Players -->
+      <div id="players"></div>
+
+      <!-- Pot -->
+      <div id="pot">Pot: 0</div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button id="fold-btn">Fold</button>
+      <button id="call-btn">Call</button>
+      <button id="raise-btn">Raise</button>
+    </div>
+
+  </div>
+
+  <script type="module" src="./js/game/game.js"></script>
+</body>
+</html>
