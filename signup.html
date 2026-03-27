@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up - Poker App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+  <div class="auth-container">
+    <h1>🃏 Create Account</h1>
+
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <input type="password" id="confirm-password" placeholder="Confirm Password" />
+
+    <button id="signup-btn">Sign Up</button>
+
+    <p id="error-msg"></p>
+
+    <p class="switch">
+      Already have an account? 
+      <a href="login.html">Login</a>
+    </p>
+  </div>
+
+  <script type="module" src="./js/auth/signup.js"></script>
+</body>
+</html>
