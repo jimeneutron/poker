@@ -1,9 +1,10 @@
+// /js/game/game.js
+
 import { auth, db } from "../firebase/config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   doc,
   getDoc,
-  setDoc,
   updateDoc,
   onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -18,14 +19,14 @@ const foldBtn = document.getElementById("fold-btn");
 const callBtn = document.getElementById("call-btn");
 const raiseBtn = document.getElementById("raise-btn");
 
-// Get room ID from URL
+// Room ID from URL
 const urlParams = new URLSearchParams(window.location.search);
 const roomId = urlParams.get("room") || "global";
 
 let currentUser = null;
 let gameState = null;
 
-// 🔐 Auth
+// 🔐 Auth check
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "login.html";
@@ -43,24 +44,23 @@ leaveBtn.onclick = () => {
   window.location.href = "lobby.html";
 };
 
-// 🧍 Join room
+// 🧍 Join room safely
 async function joinRoom() {
   const roomRef = doc(db, "rooms", roomId);
-
   const roomSnap = await getDoc(roomRef);
 
   if (!roomSnap.exists()) return;
 
   const data = roomSnap.data();
-
   const players = data.players || {};
 
-  players[currentUser.uid] = {
-    tokens: 100,
-    folded: false
-  };
+  if (!players[currentUser.uid]) {
+    players[currentUser.uid] = {
+      tokens: 100
+    };
 
-  await updateDoc(roomRef, { players });
+    await updateDoc(roomRef, { players });
+  }
 }
 
 // 👂 Listen to game state
@@ -79,24 +79,43 @@ function listenToGame() {
   });
 }
 
-// 🃏 Start game
+// 🃏 Start game + deal cards
 async function startGame() {
-  const deck = createDeck();
-
   const roomRef = doc(db, "rooms", roomId);
+  const roomSnap = await getDoc(roomRef);
+
+  const roomData = roomSnap.data();
+  const playerIds = Object.keys(roomData.players || {});
+
+  if (playerIds.length === 0) return;
+
+  let deck = createDeck();
+
+  const players = {};
+
+  // Deal 2 cards to each player
+  playerIds.forEach(id => {
+    players[id] = {
+      hand: [deck.pop(), deck.pop()],
+      tokens: roomData.players[id].tokens || 100,
+      folded: false,
+      currentBet: 0
+    };
+  });
 
   const newState = {
     deck,
     community: [],
     pot: 0,
     turn: 0,
-    players: {}
+    phase: "preflop",
+    players
   };
 
   await updateDoc(roomRef, { gameState: newState });
 }
 
-// 🃏 Deck
+// 🃏 Create + shuffle deck
 function createDeck() {
   const suits = ['H','D','C','S'];
   const ranks = ['2','3','4','5','6','7','8','9','T','J','Q','K','A'];
@@ -107,18 +126,42 @@ function createDeck() {
   return deck.sort(() => Math.random() - 0.5);
 }
 
-// 🎨 Render
+// 🎨 Render UI
 function render() {
   playersDiv.innerHTML = "";
   communityDiv.innerHTML = "";
 
-  // Players
   for (let id in gameState.players) {
     const p = gameState.players[id];
     const div = document.createElement("div");
-
     div.className = "player";
-    div.textContent = id + " | Tokens: " + p.tokens;
+
+    const isMe = id === currentUser.uid;
+
+    div.innerHTML = `
+      <div><strong>${isMe ? "You" : id}</strong></div>
+      <div>Tokens: ${p.tokens}</div>
+      <div class="hand"></div>
+    `;
+
+    const handDiv = div.querySelector(".hand");
+
+    if (isMe) {
+      // Show your cards
+      p.hand.forEach(card => {
+        const img = document.createElement("img");
+        img.src = `https://deckofcardsapi.com/static/img/${card}.png`;
+        img.style.width = "40px";
+        handDiv.appendChild(img);
+      });
+    } else {
+      // Hide others' cards
+      for (let i = 0; i < 2; i++) {
+        const back = document.createElement("div");
+        back.textContent = "🂠";
+        handDiv.appendChild(back);
+      }
+    }
 
     playersDiv.appendChild(div);
   }
@@ -133,7 +176,7 @@ function render() {
   potDiv.textContent = "Pot: " + gameState.pot;
 }
 
-// 🎮 Actions (basic for now)
+// 🎮 Actions (placeholder)
 foldBtn.onclick = () => console.log("Fold");
 callBtn.onclick = () => console.log("Call");
 raiseBtn.onclick = () => console.log("Raise");
