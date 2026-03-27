@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Poker App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Global Styles -->
+  <link rel="stylesheet" href="css/global.css">
+
+  <style>
+    /* Simple loading screen styling */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #0b3d2e;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    #loading-screen {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loading-screen">
+    <h1>🃏 Poker App</h1>
+    <p>Loading...</p>
+  </div>
+
+  <!-- App Entry Script -->
+  <script type="module">
+    import { auth } from "./js/firebase/config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // Wait for Firebase auth state
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // ✅ User is logged in → go to lobby
+        window.location.href = "lobby.html";
+      } else {
+        // ❌ Not logged in → go to login page
+        window.location.href = "login.html";
+      }
+    });
+  </script>
+
+</body>
+</html>
