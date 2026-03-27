@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lobby - Poker App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/lobby.css">
+</head>
+<body>
+
+  <div class="lobby-container">
+
+    <!-- Header -->
+    <div class="lobby-header">
+      <h1>🃏 Poker Lobby</h1>
+      <button id="logout-btn">Logout</button>
+    </div>
+
+    <!-- Rooms -->
+    <div class="rooms-section">
+      <h2>Rooms</h2>
+
+      <div id="rooms-list"></div>
+
+      <div class="create-room">
+        <input type="text" id="room-name" placeholder="Room name">
+        <button id="create-room-btn">Create Room</button>
+      </div>
+    </div>
+
+    <!-- Chat -->
+    <div class="chat-section">
+      <h2>Global Chat</h2>
+
+      <div id="chat-box"></div>
+
+      <div class="chat-input">
+        <input type="text" id="chat-input" placeholder="Type a message...">
+        <button id="send-btn">Send</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="./js/lobby/lobby.js"></script>
+</body>
+</html>
